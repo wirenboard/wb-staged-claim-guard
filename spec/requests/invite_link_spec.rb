@@ -7,7 +7,13 @@ RSpec.describe "ссылка-приглашение с адресом тенев
   fab!(:client) { Fabricate(:staged, email: "client@example.com") }
   fab!(:invite) { Fabricate(:invite, email: nil, max_redemptions_allowed: 5) }
 
-  before { enable_current_plugin }
+  before do
+    enable_current_plugin
+    # С 2026.9 приглашение по ссылке без входа может требовать кода из письма (upcoming change
+    # enable_local_logins_via_code, в тестах включена) — постороннему кода к info@ не получить.
+    # Проверяем классический путь, где учётку защищает только плагин.
+    Invite.stubs(:email_code_enabled?).returns(false) if Invite.respond_to?(:email_code_enabled?)
+  end
 
   def accept(email, username)
     put "/invites/show/#{invite.invite_key}.json",
