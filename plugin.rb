@@ -5,7 +5,7 @@
 # version: 1.0.0
 # authors: Wiren Board
 # url: https://github.com/wirenboard/wb-staged-claim-guard
-# required_version: 2026.8.0
+# required_version: 2026.7.0
 
 enabled_site_setting :wb_staged_claim_guard_enabled
 
