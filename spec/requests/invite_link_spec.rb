@@ -19,8 +19,11 @@ RSpec.describe "ссылка-приглашение с адресом тенев
   end
 
   it "отказывает и оставляет учётку служебного адреса теневой" do
-    accept("info@wirenboard.com", "wbtest_invite")
+    # запись журнала действий здесь откатывается вместе с транзакцией приглашения, потому что в
+    # тестах Scheduler::Defer синхронный; на портале она пишется отдельным потоком — видно лог
+    logs = track_log_messages { accept("info@wirenboard.com", "wbtest_invite") }
 
+    expect(logs.warnings.join).to include("не дали занять теневую учётку ##{info.id}")
     expect(response.status).to eq(412)
     expect(response.parsed_body["message"]).to include(
       I18n.t("wb_staged_claim_guard.unstage_refused"),

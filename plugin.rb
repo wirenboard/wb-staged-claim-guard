@@ -43,7 +43,7 @@ module ::WbStagedClaimGuard
     Rails.logger.warn(
       "[#{PLUGIN_NAME}] не дали занять теневую учётку ##{user.id} <#{user.email}>: #{path}, ip #{ip || "?"}",
     )
-    UserHistory.create!(
+    attrs = {
       action: UserHistory.actions[:custom_staff],
       custom_type: "wb_staged_claim_refused",
       acting_user_id: Discourse.system_user.id,
@@ -51,9 +51,15 @@ module ::WbStagedClaimGuard
       subject: user.email.to_s[0, 100],
       ip_address: ip,
       details: "путь: #{path}",
-    )
-  rescue StandardError => e
-    Rails.logger.warn("[#{PLUGIN_NAME}] не удалось записать в журнал действий: #{e.message}")
+    }
+    # Отказ в unstage! — исключение, и вызывающий код (приглашение) откатывает свою транзакцию
+    # вместе с записью журнала. Поэтому пишем отдельным потоком со своим соединением и не ждём его:
+    # ожидание могло бы встать на блокировках той же транзакции. В тестах Defer синхронный.
+    Scheduler::Defer.later("#{PLUGIN_NAME}: журнал отказа") do
+      UserHistory.create!(attrs)
+    rescue StandardError => e
+      Rails.logger.warn("[#{PLUGIN_NAME}] не удалось записать в журнал действий: #{e.message}")
+    end
   end
 end
 
