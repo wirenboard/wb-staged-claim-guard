@@ -1,0 +1,9 @@
+plugins:
+  wb_staged_claim_guard_enabled:
+    default: true
+    client: false
+  wb_staged_claim_guard_protected:
+    type: list
+    list_type: simple
+    default: "wirenboard.com|wirenboard.ru|contactless.ru"
+    client: false

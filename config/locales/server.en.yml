@@ -1,0 +1,7 @@
+en:
+  site_settings:
+    wb_staged_claim_guard_enabled: "Refuse to turn the staged account of a company mailbox into a regular one by sign-up, invite or login. Without it, anyone who signs up with info@ immediately takes over its staged account, and the forum stops accepting mail from that address."
+    wb_staged_claim_guard_protected: "Protected domains (the whole domain) and exact addresses (an entry with @). Only existing staged accounts with these addresses are protected: new sign-ups on these domains and clients' staged accounts are not affected."
+  wb_staged_claim_guard:
+    signup_refused: "This is a company mailbox address and it cannot be used to sign up. If you need an account with this address, please contact the forum administrators."
+    unstage_refused: "The staged account of a company mailbox is protected: it cannot be taken over by sign-up, invite or login. Remove the address from wb_staged_claim_guard_protected if this is intended."
